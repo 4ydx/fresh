@@ -59,7 +59,9 @@ func trimArguments(arguments []string) ([]string, []string) {
 
 	// get our list of arguments to pass to our binary that we restart
 	trimmed := make([]string, 0)
-	if removeAt > -1 {
+	if removeAt == -1 {
+		trimmed = arguments
+	} else {
 		for i, arg := range arguments {
 			if i != removeAt && i != removeAt+1 {
 				trimmed = append(trimmed, arg)

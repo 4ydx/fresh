@@ -1,12 +1,13 @@
 package runner
 
 import (
+	"fmt"
 	"io"
 	"os/exec"
 )
 
 func run(arguments []string) bool {
-	runnerLog("Running...")
+	runnerLog(fmt.Sprintf("Running with arguments %+v", arguments))
 
 	cmd := exec.Command(buildPath(), arguments...)
 
