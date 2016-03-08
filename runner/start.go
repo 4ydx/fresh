@@ -29,7 +29,7 @@ func flushEvents() {
 	}
 }
 
-func start() {
+func start(arguments []string) {
 	loopIndex := 0
 	buildDelay := buildDelay()
 
@@ -65,7 +65,7 @@ func start() {
 				if started {
 					stopChannel <- true
 				}
-				run()
+				run(arguments)
 			}
 
 			started = true
@@ -102,14 +102,14 @@ func setEnvVars() {
 
 // Watches for file changes in the root directory.
 // After each file system event it builds and (re)starts the application.
-func Start() {
+func Start(arguments []string) {
 	initLimit()
 	initSettings()
 	initLogFuncs()
 	initFolders()
 	setEnvVars()
 	watch()
-	start()
+	start(arguments)
 	startChannel <- "/"
 
 	<-make(chan int)

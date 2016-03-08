@@ -32,5 +32,29 @@ func main() {
 		}
 	}
 
-	runner.Start()
+	arguments := trimArguments(os.Args)
+	runner.Start(arguments)
+}
+
+// remove program and config from arguments
+func trimArguments(arguments []string) []string {
+	arguments = arguments[1:]
+	removeAt := -1
+	for i, arg := range arguments {
+		if arg == "c" {
+			if removeAt != -1 {
+				panic("Too many config arguments specified")
+			}
+			removeAt = i
+		}
+	}
+	trimmed := make([]string, 0)
+	if removeAt > -1 {
+		for i, arg := range arguments {
+			if i != removeAt && i != removeAt+1 {
+				trimmed = append(trimmed, arg)
+			}
+		}
+	}
+	return trimmed
 }
