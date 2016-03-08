@@ -20,6 +20,9 @@ import (
 )
 
 func main() {
+	arguments, config := trimArguments(os.Args)
+
+	os.Args = config // removed all other values so that flag parsing wont complain
 	configPath := flag.String("c", "", "config file path")
 	flag.Parse()
 
@@ -32,12 +35,12 @@ func main() {
 		}
 	}
 
-	arguments := trimArguments(os.Args)
 	runner.Start(arguments)
 }
 
 // remove program and config from arguments
-func trimArguments(arguments []string) []string {
+func trimArguments(arguments []string) ([]string, []string) {
+	program := arguments[0]
 	arguments = arguments[1:]
 	removeAt := -1
 	for i, arg := range arguments {
@@ -48,13 +51,21 @@ func trimArguments(arguments []string) []string {
 			removeAt = i
 		}
 	}
+
+	// rebuild a sane list of arguments for flag to parse
+	config := make([]string, 0)
+	config = append(config, program)
+
+	// get our list of arguments to pass to our binary that we restart
 	trimmed := make([]string, 0)
 	if removeAt > -1 {
 		for i, arg := range arguments {
 			if i != removeAt && i != removeAt+1 {
 				trimmed = append(trimmed, arg)
+			} else {
+				config = append(config, arg)
 			}
 		}
 	}
-	return trimmed
+	return trimmed, config
 }
