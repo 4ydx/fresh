@@ -38,7 +38,8 @@ func main() {
 	runner.Start(arguments)
 }
 
-// remove program and config from arguments
+// trimArguments returns arguments to pass to the binary being rebuilt
+// as well as values to be directly consumed by flag parsing
 func trimArguments(arguments []string) ([]string, []string) {
 	program := arguments[0]
 	arguments = arguments[1:]
