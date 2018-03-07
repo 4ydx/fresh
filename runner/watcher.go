@@ -42,10 +42,13 @@ func watch() {
 			if len(path) > 1 && strings.HasPrefix(filepath.Base(path), ".") {
 				return filepath.SkipDir
 			}
-
 			watchFolder(path)
 		}
 
 		return err
 	})
+
+	// dirty hack
+	watcherLog("Hardcoded directories follow:")
+	watchFolder("../www-templates")
 }
