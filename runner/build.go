@@ -43,11 +43,11 @@ func build() (string, bool) {
 	if !ok {
 		return msg, ok
 	}
-	_, err := os.Stat("static/js/build.sh")
+	_, err := os.Stat("static/js/games/dnd/build.sh")
 	if err == nil {
 		buildLog("Building js chdir...")
 
-		err = os.Chdir("static/js/")
+		err = os.Chdir("static/js/games/dnd/")
 		if err != nil {
 			fatal(err)
 		}
@@ -70,7 +70,7 @@ func build() (string, bool) {
 		errBuf, _ := ioutil.ReadAll(stderr)
 
 		buildLog("Building js retreat...")
-		err = os.Chdir("../../")
+		err = os.Chdir("../../../../")
 		if err != nil {
 			fatal(err)
 		}
