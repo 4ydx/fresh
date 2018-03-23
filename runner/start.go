@@ -54,20 +54,18 @@ func start(arguments []string) {
 				mainLog(err.Error())
 			}
 
-			errorMessage, ok := build()
+			ok := build(started)
 			if !ok {
-				mainLog("Build Failed: \n %s", errorMessage)
 				if !started {
+					mainLog("A build failure occured.")
 					os.Exit(1)
 				}
-				createBuildErrorsLog(errorMessage)
 			} else {
 				if started {
 					stopChannel <- true
 				}
 				run(arguments)
 			}
-
 			started = true
 			mainLog(strings.Repeat("-", 20))
 		}
