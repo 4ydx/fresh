@@ -39,6 +39,8 @@ func runBuild(cmd *exec.Cmd) (string, bool) {
 }
 
 func buildHelper(wg *sync.WaitGroup, ok *BuildOk, project string) {
+	defer wg.Done()
+
 	description := strings.Split(project, " ")
 	project = description[0]
 	relativePath := description[1]
@@ -97,7 +99,6 @@ func buildHelper(wg *sync.WaitGroup, ok *BuildOk, project string) {
 		}
 		buildLog("Building js %s complete", project)
 	}
-	wg.Done()
 }
 
 func build(started bool) bool {
