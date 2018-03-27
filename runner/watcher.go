@@ -49,6 +49,15 @@ func watch() {
 	})
 
 	// dirty hack
-	watcherLog("Hardcoded directories follow:")
-	watchFolder("../www-templates")
+	root = "../www-templates"
+	filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		if info.IsDir() && !isTmpDir(path) {
+			if len(path) > 1 && strings.HasPrefix(filepath.Base(path), ".") {
+				return filepath.SkipDir
+			}
+			watchFolder(path)
+		}
+
+		return err
+	})
 }
