@@ -74,12 +74,7 @@ func buildHelper(wg *sync.WaitGroup, ok *BuildOk, project string) {
 		// Get the last folder name in the path.
 		// Move the resulting files to the directory whose code they are built from
 		// EG project/is/here -> here.js & here.js.map
-		currentDir, err := filepath.Abs(".")
-		if err != nil {
-			panic(err)
-		}
 		parent := filepath.Base(project)
-		buildLog("Parent %s in %s", parent, currentDir)
 
 		// js
 		_, err = os.Stat(parent + ".js")
@@ -97,7 +92,7 @@ func buildHelper(wg *sync.WaitGroup, ok *BuildOk, project string) {
 				fatal(err)
 			}
 		}
-		buildLog("Building js %s complete", project)
+		buildLog("Moving %s to %s complete", parent, relativePath)
 	}
 }
 
