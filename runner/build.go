@@ -43,10 +43,14 @@ func buildHelper(wg *sync.WaitGroup, ok *BuildOk, project string) {
 
 	description := strings.Split(project, " ")
 	project = description[0]
-	relativePath := description[1]
 
 	buildLog("Building %s", project)
-	cmd := exec.Command("gopherjs", "build", project)
+
+	relativePath := description[1]
+	base := filepath.Base(project)
+	target := relativePath + "/" + base + ".js"
+
+	cmd := exec.Command("gopherjs", "build", project, "-o", target)
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
 		fatal(err)
@@ -70,29 +74,6 @@ func buildHelper(wg *sync.WaitGroup, ok *BuildOk, project string) {
 		ok.Lock()
 		ok.Val = false
 		ok.Unlock()
-	} else {
-		// Get the last folder name in the path.
-		// Move the resulting files to the directory whose code they are built from
-		// EG project/is/here -> here.js & here.js.map
-		parent := filepath.Base(project)
-
-		// js
-		_, err = os.Stat(parent + ".js")
-		if err == nil {
-			err = os.Rename(parent+".js", relativePath+"/"+parent+".js")
-			if err != nil {
-				fatal(err)
-			}
-		}
-		// map
-		_, err = os.Stat(parent + ".js.map")
-		if err == nil {
-			err = os.Rename(parent+".js.map", relativePath+"/"+parent+".js.map")
-			if err != nil {
-				fatal(err)
-			}
-		}
-		buildLog("Moving %s to %s complete", parent, relativePath)
 	}
 }
 
