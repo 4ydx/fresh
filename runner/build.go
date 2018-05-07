@@ -44,11 +44,8 @@ func buildHelper(wg *sync.WaitGroup, ok *BuildOk, project string) {
 	description := strings.Split(project, " ")
 	project = description[0]
 
-	buildLog("Building %s", project)
-
-	relativePath := description[1]
-	base := filepath.Base(project)
-	target := relativePath + "/" + base + ".js"
+	target := description[1] + "/" + filepath.Base(project) + ".js"
+	buildLog("Building %s", target)
 
 	cmd := exec.Command("gopherjs", "build", project, "-o", target)
 	stderr, err := cmd.StderrPipe()
