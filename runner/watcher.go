@@ -1,6 +1,7 @@
 package runner
 
 import (
+	"fmt"
 	"github.com/howeyc/fsnotify"
 	"os"
 	"path/filepath"
@@ -39,12 +40,16 @@ func watch() {
 	root := root()
 	filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() && !isTmpDir(path) {
+			// ignore hidden folders
 			if len(path) > 1 && strings.HasPrefix(filepath.Base(path), ".") {
+				return filepath.SkipDir
+			}
+			// ignore testing folder
+			if strings.HasPrefix(path, "testing") {
 				return filepath.SkipDir
 			}
 			watchFolder(path)
 		}
-
 		return err
 	})
 
@@ -52,12 +57,12 @@ func watch() {
 	root = "../www-templates"
 	filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() && !isTmpDir(path) {
+			// ignore hidden folders
 			if len(path) > 1 && strings.HasPrefix(filepath.Base(path), ".") {
 				return filepath.SkipDir
 			}
 			watchFolder(path)
 		}
-
 		return err
 	})
 }
