@@ -1,7 +1,6 @@
 package runner
 
 import (
-	"fmt"
 	"github.com/howeyc/fsnotify"
 	"os"
 	"path/filepath"
