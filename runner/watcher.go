@@ -47,6 +47,10 @@ func watch() {
 			if strings.HasPrefix(path, "testing") {
 				return filepath.SkipDir
 			}
+			// ignore docker folder
+			if strings.HasPrefix(path, "docker") {
+				return filepath.SkipDir
+			}
 			watchFolder(path)
 		}
 		return err
