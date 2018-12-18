@@ -47,30 +47,40 @@ func buildHelper(wg *sync.WaitGroup, ok *BuildOk, project string) {
 	target := description[1] + "/" + filepath.Base(project) + ".js"
 	buildLog("Building %s", target)
 
-	cmd := exec.Command("gopherjs", "build", project, "-o", target)
-	stderr, err := cmd.StderrPipe()
-	if err != nil {
-		fatal(err)
-	}
-	stdout, err := cmd.StdoutPipe()
-	if err != nil {
-		fatal(err)
-	}
-	err = cmd.Start()
-	if err != nil {
-		fatal(err)
-	}
-	io.Copy(os.Stdout, stdout)
-	errBuf, _ := ioutil.ReadAll(stderr)
+	running := []string{"go", "gopherjs"}
 
-	err = cmd.Wait()
-	if err != nil {
-		mainLog("Build Failed: \n %s", string(errBuf))
-		createBuildErrorsLog(string(errBuf))
+	for _, run := range running {
+		var cmd *exec.Cmd
+		switch run {
+		case "go":
+			cmd = exec.Command(run, "build", project)
+		case "gopherjs":
+			cmd = exec.Command(run, "build", project, "-o", target)
+		}
+		stderr, err := cmd.StderrPipe()
+		if err != nil {
+			fatal(err)
+		}
+		stdout, err := cmd.StdoutPipe()
+		if err != nil {
+			fatal(err)
+		}
+		err = cmd.Start()
+		if err != nil {
+			fatal(err)
+		}
+		io.Copy(os.Stdout, stdout)
+		errBuf, _ := ioutil.ReadAll(stderr)
 
-		ok.Lock()
-		ok.Val = false
-		ok.Unlock()
+		err = cmd.Wait()
+		if err != nil {
+			mainLog("Build Failed: \n %s", string(errBuf))
+			createBuildErrorsLog(string(errBuf))
+
+			ok.Lock()
+			ok.Val = false
+			ok.Unlock()
+		}
 	}
 }
 
