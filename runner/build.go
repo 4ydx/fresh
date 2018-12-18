@@ -87,15 +87,6 @@ func buildHelper(wg *sync.WaitGroup, ok *BuildOk, project string) {
 func build(started bool) bool {
 	buildLog("Now building path %s root %s", buildPath(), root())
 
-	/*
-		cmd := exec.Command("go", "build", "-o", buildPath(), root())
-		msg, ok := runBuild(cmd)
-		if !ok {
-			mainLog("Build Failed: \n %s", msg)
-			createBuildErrorsLog(msg)
-			return ok
-		}
-	*/
 	cmd := exec.Command("make")
 	msg, ok := runBuild(cmd)
 	if !ok {
