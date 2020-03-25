@@ -1,8 +1,10 @@
 package runner
 
 import (
+	"crypto/tls"
 	"io"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -74,7 +76,7 @@ func buildHelper(wg *sync.WaitGroup, ok *BuildOk, project string) {
 
 		err = cmd.Wait()
 		if err != nil {
-			mainLog("Build Failed: \n %s", string(errBuf))
+			mainLog("Build Failed: \n %s \n %s", cmd.String(), string(errBuf))
 			createBuildErrorsLog(string(errBuf))
 
 			ok.Lock()
@@ -113,6 +115,23 @@ func build(started bool) bool {
 	mainLog("Build Waiting")
 
 	wg.Wait()
+
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	resp, err := http.Get("https://localhost:10000/refresh")
+	if err != nil {
+		mainLog("Refresh Failed: %s", err)
+		buildOk.Val = false
+	}
+	defer resp.Body.Close()
+
+	if ok, err := ioutil.ReadAll(resp.Body); err != nil || string(ok) != "OK" {
+		if err != nil {
+			mainLog("Refresh Failed: %s", err)
+		} else {
+			mainLog("Refresh Failed: %s", string(ok))
+		}
+		buildOk.Val = false
+	}
 
 	return buildOk.Val
 }

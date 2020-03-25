@@ -47,6 +47,7 @@ func createBuildErrorsLog(message string) bool {
 	if err != nil {
 		return false
 	}
+	defer file.Close()
 
 	_, err = file.WriteString(message)
 	if err != nil {
